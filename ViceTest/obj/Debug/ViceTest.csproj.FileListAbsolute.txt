@@ -1,0 +1,14 @@
+E:\myproject\达州公安局\4.0\policeui\police.website\ViceTest\bin\Debug\ViceTest.dll.config
+E:\myproject\达州公安局\4.0\policeui\police.website\ViceTest\bin\Debug\ViceTest.dll
+E:\myproject\达州公安局\4.0\policeui\police.website\ViceTest\bin\Debug\ViceTest.pdb
+E:\myproject\达州公安局\4.0\policeui\police.website\ViceTest\bin\Debug\EntityFramework.dll
+E:\myproject\达州公安局\4.0\policeui\police.website\ViceTest\bin\Debug\EntityFramework.SqlServer.dll
+E:\myproject\达州公安局\4.0\policeui\police.website\ViceTest\bin\Debug\Vice.Entity.dll
+E:\myproject\达州公安局\4.0\policeui\police.website\ViceTest\bin\Debug\Vice.Repository.dll
+E:\myproject\达州公安局\4.0\policeui\police.website\ViceTest\bin\Debug\Vice.Entity.pdb
+E:\myproject\达州公安局\4.0\policeui\police.website\ViceTest\bin\Debug\Vice.Repository.pdb
+E:\myproject\达州公安局\4.0\policeui\police.website\ViceTest\bin\Debug\EntityFramework.xml
+E:\myproject\达州公安局\4.0\policeui\police.website\ViceTest\bin\Debug\EntityFramework.SqlServer.xml
+E:\myproject\达州公安局\4.0\policeui\police.website\ViceTest\obj\Debug\ViceTest.csprojResolveAssemblyReference.cache
+E:\myproject\达州公安局\4.0\policeui\police.website\ViceTest\obj\Debug\ViceTest.dll
+E:\myproject\达州公安局\4.0\policeui\police.website\ViceTest\obj\Debug\ViceTest.pdb

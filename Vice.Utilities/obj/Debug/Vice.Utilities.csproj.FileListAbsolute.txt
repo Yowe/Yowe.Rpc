@@ -1,0 +1,5 @@
+E:\myproject\达州公安局\4.0\policeui\police.website\Vice.Utilities\bin\Debug\Vice.Utilities.dll
+E:\myproject\达州公安局\4.0\policeui\police.website\Vice.Utilities\bin\Debug\Vice.Utilities.pdb
+E:\myproject\达州公安局\4.0\policeui\police.website\Vice.Utilities\obj\Debug\Vice.Utilities.csprojResolveAssemblyReference.cache
+E:\myproject\达州公安局\4.0\policeui\police.website\Vice.Utilities\obj\Debug\Vice.Utilities.dll
+E:\myproject\达州公安局\4.0\policeui\police.website\Vice.Utilities\obj\Debug\Vice.Utilities.pdb
