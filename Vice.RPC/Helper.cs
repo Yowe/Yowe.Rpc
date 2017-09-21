@@ -13,7 +13,8 @@ namespace Vice.RPC
         {
             var clusterConnections = connectionString.Split(new[] { '|' }, StringSplitOptions.RemoveEmptyEntries);
             if (clusterConnections.Length > 1)
-            { 
+            {
+                
             }
         }
 
