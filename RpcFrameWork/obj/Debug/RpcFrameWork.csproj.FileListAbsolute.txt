@@ -1,0 +1,6 @@
+E:\myproject\MyGitProject\rpc\RpcFrameWork\bin\Debug\RpcFrameWork.dll
+E:\myproject\MyGitProject\rpc\RpcFrameWork\bin\Debug\RpcFrameWork.pdb
+E:\myproject\MyGitProject\rpc\RpcFrameWork\bin\Debug\RabbitMQ.Client.dll
+E:\myproject\MyGitProject\rpc\RpcFrameWork\obj\Debug\RpcFrameWork.csprojResolveAssemblyReference.cache
+E:\myproject\MyGitProject\rpc\RpcFrameWork\obj\Debug\RpcFrameWork.dll
+E:\myproject\MyGitProject\rpc\RpcFrameWork\obj\Debug\RpcFrameWork.pdb

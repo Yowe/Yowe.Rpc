@@ -43,8 +43,17 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ConnectionString.cs" />
+    <Compile Include="Global.cs" />
+    <Compile Include="IConsumerErrorHandler.cs" />
+    <Compile Include="IDurableConnection.cs" />
     <Compile Include="IMessageHandler.cs" />
     <Compile Include="Internal\BinarySerializer.cs" />
+    <Compile Include="Internal\ConsoleWatcher.cs" />
+    <Compile Include="Internal\ConsumerErrorHandler.cs" />
+    <Compile Include="Internal\DefaultRetryPolicy.cs" />
+    <Compile Include="Internal\DurableConnection.cs" />
+    <Compile Include="IRetryPolicy.cs" />
+    <Compile Include="IRabbitWatcher.cs" />
     <Compile Include="ISerializer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
