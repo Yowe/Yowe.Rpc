@@ -36,7 +36,19 @@ namespace RpcFrameWork
                 _parametersDictionary.Add(keyValueParts[0], keyValueParts[1]);
             }
 
-           
+
+            Port = int.Parse(GetValue("port", "5672"));
+            Host = GetValue("host", "localhost");
+            VirtualHost = GetValue("virtualhost", "/");
+            UserName = GetValue("username", "guest");
+            Password = GetValue("password", "guest");
+
+            if (Host.Contains(":"))
+            {
+                var index = Host.IndexOf(":", StringComparison.Ordinal);
+                Port = int.Parse(Host.Substring(index + 1));
+                Host = Host.Substring(0, index);
+            }
         }
 
         /// <summary>

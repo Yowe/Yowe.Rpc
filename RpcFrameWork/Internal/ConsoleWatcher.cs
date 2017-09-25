@@ -14,28 +14,28 @@ namespace RpcFrameWork.Internal
         {
             if (IsDebugEnable)
             {
-                
+                Write(ConsoleColor.Gray, format, args);
             }
         }
 
         public void Error(Exception exception)
         {
-            throw new NotImplementedException();
+            Write(ConsoleColor.Red, exception.ToString());
         }
 
         public void ErrorFormat(string format, params object[] args)
         {
-            throw new NotImplementedException();
+            Write(ConsoleColor.Red, format, args);
         }
 
         public void InfoFormat(string format, params object[] args)
         {
-            throw new NotImplementedException();
+            Write(ConsoleColor.Green, format, args);
         }
 
         public void WarnFormat(string format, params object[] args)
         {
-            throw new NotImplementedException();
+            Write(ConsoleColor.Yellow,for, args) ;
         }
 
         private void Write(ConsoleColor color, string format, params object[] args)

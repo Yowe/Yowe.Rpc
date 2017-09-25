@@ -5,6 +5,7 @@ using System.Text;
 using RabbitMQ.Client.Events;
 using RabbitMQ.Client;
 using RabbitMQ.Client.Exceptions;
+using System.Diagnostics.CodeAnalysis;
 
 namespace RpcFrameWork.Internal
 {
@@ -128,16 +129,17 @@ namespace RpcFrameWork.Internal
             }
         }
 
+        [ExcludeFromCodeCoverage]
         public void OnCompleted()
         {
             throw new NotImplementedException();
         }
-
+        [ExcludeFromCodeCoverage]
         public void OnError(Exception error)
         {
             throw new NotImplementedException();
         }
-
+        [ExcludeFromCodeCoverage]
         public void OnNext(ISerializer value)
         {
             throw new NotImplementedException();
