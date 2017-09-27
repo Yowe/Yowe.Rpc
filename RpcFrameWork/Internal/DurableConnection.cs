@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using RabbitMQ.Client;
+using RabbitMQ.Client.Exceptions;
+using System.Threading;
 
 namespace RpcFrameWork.Internal
 {
@@ -19,7 +21,6 @@ namespace RpcFrameWork.Internal
         /// <summary>
         /// 断开连接触发事件
         /// </summary>
-        public event Action DisConnected;
         public event Action Disconnected;
 
         public DurableConnection(IRetryPolicy retryPolicy, IRabbitWatcher watcher)
@@ -63,6 +64,74 @@ namespace RpcFrameWork.Internal
 
         }
 
+        public void Connect()
+        {
+            Monitor.Enter(ManagedConnectionFactory.SyncConnection);
+
+            try
+            {
+                if (IsConnected || _retryPolicy.IsWaiting)
+                {
+                    return;
+                }
+
+                _watcher.DebugFormat("试图连接到端点:{0}", ConnectionFactory.Endpoint);
+                var newConnection = ConnectionFactory.CreateConnection();
+                newConnection.ConnectionShutdown += NewConnection_ConnectionShutdown;
+
+                _retryPolicy.Reset();
+                _watcher.InfoFormat("连接到RabbitMQ:Broker: {0}, VHost: {1}", ConnectionFactory.Endpoint, ConnectionFactory.HostName);
+            }
+            catch
+            { }
+            finally
+            {
+                Monitor.Exit(ManagedConnectionFactory.SyncConnection);
+            }
+        }
+
+        private void NewConnection_ConnectionShutdown(IConnection connection, ShutdownEventArgs reason)
+        {
+            FireDisconnectedEvent();
+            _watcher.WarnFormat("断开RabbitMQ代理 '{0}': {1}", connection.Endpoint, reason != null ? reason.ReplyText : "");
+        }
+
+        public IModel CreateChannel()
+        {
+            if (!IsConnected)
+            {
+                Connect();
+            }
+
+            if (!IsConnected)
+            {
+                throw new BrokerUnreachableException(new Exception("Cannot connect to Rabbit server."));
+            }
+
+            var connection = ManagedConnectionFactory.SharedConnections[ConnectionFactory.Endpoint + ConnectionFactory.VirtualHost];
+            var channel = connection.CreateModel();
+            return channel;
+        }
+
+        public void Dispose()
+        {
+            _unsubscribeEvents();
+        }
+
+        protected void FireConnectedEvent()
+        {
+            if (Connected != null)
+            {
+                Connected.Invoke();
+            }
+        }
+
+        protected void FireDisconnectedEvent()
+        {
+            Disconnected?.Invoke();
+        }
+
+        #region ------------属性-----------
         public string HostName
         {
             get { return _connectionFactory.HostName; }
@@ -79,12 +148,12 @@ namespace RpcFrameWork.Internal
 
         public string UserName
         {
-            get  {  return ConnectionFactory.UserName; }
+            get { return ConnectionFactory.UserName; }
         }
 
         public string VirtualHost
         {
-            get{ return ConnectionFactory.VirtualHost;  }
+            get { return ConnectionFactory.VirtualHost; }
         }
 
         private readonly ConnectionFactory _connectionFactory;
@@ -92,28 +161,6 @@ namespace RpcFrameWork.Internal
         {
             get { return _connectionFactory; }
         }
-
-        public void Connect()
-        {
-            throw new NotImplementedException();
-        }
-
-        public IModel CreateChannel()
-        {
-            throw new NotImplementedException();
-        }
-
-        public void Dispose()
-        {
-            throw new NotImplementedException();
-        }
-
-        protected void FireConnectedEvent()
-        {
-            if(Connected!=null)
-            {
-                Connected.Invoke();
-            }
-        }
+        #endregion
     }
 }

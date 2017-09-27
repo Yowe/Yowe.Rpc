@@ -16,7 +16,7 @@ namespace RpcFrameWork.Internal
 
     public class ManagedConnectionFactory:ConnectionFactory
     {
-        static readonly object SyncConnection = new object();
+        internal static readonly object SyncConnection = new object();
         internal static volatile Dictionary<string, IConnection> SharedConnections = new Dictionary<string, IConnection>();
 
         public static ConnectionEstablished ConnectionEstablished { get; set; }
@@ -66,6 +66,10 @@ namespace RpcFrameWork.Internal
                 : new ManagedConnectionFactory(connectionFactory);
         }
 
+        /// <summary>
+        /// 自定义创建RabbitMQ的连接
+        /// </summary>
+        /// <returns></returns>
         public sealed override IConnection CreateConnection()
         {
             var connection = EstablishConnection();
@@ -83,7 +87,10 @@ namespace RpcFrameWork.Internal
             return base.CreateConnection();
         }
 
-
+        /// <summary>
+        /// 保存连接对象并触发连接事件
+        /// </summary>
+        /// <param name="connection"></param>
         private void SaveConnection(IConnection connection)
         {
             if (connection != null && connection.IsOpen)
