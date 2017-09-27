@@ -52,6 +52,7 @@
     <Compile Include="Internal\ConsumerErrorHandler.cs" />
     <Compile Include="Internal\DefaultRetryPolicy.cs" />
     <Compile Include="Internal\DurableConnection.cs" />
+    <Compile Include="Internal\ManagedConnectionFactory.cs" />
     <Compile Include="IRetryPolicy.cs" />
     <Compile Include="IRabbitWatcher.cs" />
     <Compile Include="ISerializer.cs" />
