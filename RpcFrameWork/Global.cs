@@ -1,4 +1,5 @@
-﻿using System;
+﻿using RpcFrameWork.Internal;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -7,6 +8,7 @@ namespace RpcFrameWork
 {
     public static class Global
     {
+        public static IRabbitWatcher DefaultWatcher = new ConsoleWatcher();
         /// <summary>
         /// 错误消息将被发布到的错误队列名称。
         /// <para>你不需要创建这个队列，当出现错误时，库会创建它</para>

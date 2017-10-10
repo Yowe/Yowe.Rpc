@@ -19,6 +19,11 @@ namespace RpcFrameWork.Internal
         internal static readonly object SyncConnection = new object();
         internal static volatile Dictionary<string, IConnection> SharedConnections = new Dictionary<string, IConnection>();
 
+        /// <summary>
+        /// 当与RabbitMQ服务器建立物理连接时，将触发该事件。
+        /// </summary>
+        /// <param name="endpoint"></param>
+        /// <param name="virtualHost"></param>
         public static ConnectionEstablished ConnectionEstablished { get; set; }
 
         public ManagedConnectionFactory()

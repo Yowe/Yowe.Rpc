@@ -94,6 +94,9 @@ namespace RpcFrameWork.Internal
         {
             FireDisconnectedEvent();
             _watcher.WarnFormat("断开RabbitMQ代理 '{0}': {1}", connection.Endpoint, reason != null ? reason.ReplyText : "");
+            if(reason!=null&&reason.ReplyText!="Connection disposed by application"&&
+                reason.ReplyText!= "")
+
         }
 
         public IModel CreateChannel()
@@ -112,6 +115,7 @@ namespace RpcFrameWork.Internal
             var channel = connection.CreateModel();
             return channel;
         }
+
 
         public void Dispose()
         {
