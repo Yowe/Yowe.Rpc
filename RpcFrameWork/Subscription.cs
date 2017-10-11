@@ -35,6 +35,10 @@ namespace RpcFrameWork
         internal protected Subscription()
         {
         }
+        internal protected Subscription(IModel model) : this()
+        {
+            SetChannel(model);
+        }
 
         public void SetChannel(IModel channel)
         {
@@ -52,8 +56,28 @@ namespace RpcFrameWork
         {
             TryCancel(x => x.BasicCancel(ConsumerTag), _channel, Global.DefaultWatcher);
         }
+        /// <summary>
+        /// 通过发送标签来发送消息
+        /// </summary>
+        /// <param name="deliveryTag"></param>
+        public void Ack(ulong deliveryTag)
+        {
+            TryAck(_channel, deliveryTag, false);
+        }
 
+        public void Nack(IEnumerable<ulong> deliveryTags, bool requeue)
+        {
 
+        }
+
+        private void TryAck(IModel channel, ulong deliveryTag, bool multiple, IRabbitWatcher watcher = null)
+        {
+            TryAckOrNack(ConsumerTag, true, channel, deliveryTag,, multiple, watcher);
+        }
+        private void TryNack(IModel channel, ulong deliveryTag, bool multiple, bool requeue, IRabbitWatcher watcher = null)
+        {
+            TryAckOrNack(ConsumerTag, false, channel, deliveryTag, multiple, requeue, watcher);
+        }
 
         internal void TryCancel(Action<IModel> action, IModel channel, IRabbitWatcher watcher)
         {
@@ -73,5 +97,62 @@ namespace RpcFrameWork
                 watcher.WarnFormat(failedMessage, ioException.Message);
             }
         }
+
+        private const string FailedToAckMessage = "Basic ack/nack failed because chanel was closed with message {0}. Message remains on RabbitMQ and will be retried.";
+       
+        internal static void TryAckOrNack(string consumerTag, bool ack, IModel channel, ulong deliveryTag, bool multiple, bool requeue, IRabbitWatcher watcher = null)
+        {
+            try
+            {
+                if (channel == null)
+                {
+                    (watcher ?? Global.DefaultWatcher).WarnFormat("Trying ack/nack msg but the Channel is null, will not do anything");
+                }
+                else if (!channel.IsOpen)
+                {
+                    (watcher ?? Global.DefaultWatcher).WarnFormat("Trying ack/nack msg but the Channel is not open, will not do anything");
+                }
+                else
+                {
+                    if (ack)
+                    {
+                        channel.BasicAck(deliveryTag, multiple);
+                    }
+                    else
+                    {
+                        channel.BasicNack(deliveryTag, multiple, requeue);
+                    }
+
+                    lock (OutstandingDeliveryTags)
+                    {
+                        if (OutstandingDeliveryTags.ContainsKey(consumerTag))
+                        {
+                            if (deliveryTag == 0)
+                            {
+                                OutstandingDeliveryTags[consumerTag].Clear();
+                            }
+                            else if (multiple)
+                            {
+                                OutstandingDeliveryTags[consumerTag].RemoveAll(x => x <= deliveryTag);
+                            }
+                            else
+                            {
+                                OutstandingDeliveryTags[consumerTag].Remove(deliveryTag);
+                            }
+                        }
+                    }
+                }
+            }
+            catch (AlreadyClosedException alreadyClosedException)
+            {
+                (watcher ?? Global.DefaultWatcher).WarnFormat(FailedToAckMessage, alreadyClosedException.Message);
+            }
+            catch (IOException ioException)
+            {
+                (watcher ?? Global.DefaultWatcher).WarnFormat(FailedToAckMessage, ioException.Message);
+            }
+        }
+
+     
     }
 }
