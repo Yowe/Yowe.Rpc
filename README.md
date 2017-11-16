@@ -1,3 +1,2 @@
 # Yowe.Rpc
-Rpc Learning
-First rpc learn
+第一个 rpc 框架，目前正在完善中
