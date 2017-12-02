@@ -13,6 +13,10 @@ namespace RpcFrameWork.Internal
         private volatile bool _iswaiting;
         private volatile int _delayTime;
 
+        /// <summary>
+        /// 初始化默认的重试策略= 5分钟
+        /// </summary>
+        /// <param name="maxDelayTime"></param>
         public DefaultRetryPolicy(int maxDelayTime = 5 * 60 * 1000/*5分钟*/)
         {
             _maxDelayTime = maxDelayTime;
@@ -52,6 +56,8 @@ namespace RpcFrameWork.Internal
                 _iswaiting = false;
                 retryingAction();
             });
+
+            timer.Change(_delayTime, Timeout.Infinite);
         }
     }
 }

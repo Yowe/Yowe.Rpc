@@ -8,6 +8,9 @@ using System.Threading;
 
 namespace RpcFrameWork.Internal
 {
+    /// <summary>
+    /// RabbitMQ服务器的连接,并在连接丢失时重试
+    /// </summary>
     public class DurableConnection : IDurableConnection
     {
 
@@ -64,6 +67,9 @@ namespace RpcFrameWork.Internal
 
         }
 
+        /// <summary>
+        /// 尝试连接到rabbitmq服务器，如果连接失败，则重试。
+        /// </summary>
         public void Connect()
         {
             Monitor.Enter(ManagedConnectionFactory.SyncConnection);
@@ -88,6 +94,17 @@ namespace RpcFrameWork.Internal
             {
                 Monitor.Exit(ManagedConnectionFactory.SyncConnection);
             }
+        }
+
+        private void HandleConnectionException(Exception ex)
+        {
+            _watcher.ErrorFormat("连接主机失败：{0}，Host:{1},尝试 {2} 秒后重试.ExceptionMessage:{3}",
+                   ConnectionFactory.HostName,
+                    ConnectionFactory.VirtualHost,
+                    _retryPolicy.DelayTime,
+                    ex.Message);
+
+            _retryPolicy.WaitForNextRetry(Connect);
         }
 
         private void NewConnection_ConnectionShutdown(IConnection connection, ShutdownEventArgs reason)

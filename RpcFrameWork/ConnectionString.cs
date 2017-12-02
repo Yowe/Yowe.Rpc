@@ -70,6 +70,12 @@ namespace RpcFrameWork
             }
             return _parametersDictionary[key];
         }
+        /// <summary>
+        /// 获取指定键对应的值
+        /// </summary>
+        /// <param name="key"></param>
+        /// <param name="defaultValue">缺省值</param>
+        /// <returns></returns>
         public string GetValue(string key, string defaultValue)
         {
             if (key == null)
