@@ -88,8 +88,14 @@ namespace RpcFrameWork.Internal
                 _retryPolicy.Reset();
                 _watcher.InfoFormat("连接到RabbitMQ:Broker: {0}, VHost: {1}", ConnectionFactory.Endpoint, ConnectionFactory.HostName);
             }
-            catch
-            { }
+            catch (ConnectFailureException connectFailureException)
+            {
+                HandleConnectionException(connectFailureException);
+            }
+            catch (BrokerUnreachableException brokerUnreachableException)
+            {
+                HandleConnectionException(brokerUnreachableException);
+            }
             finally
             {
                 Monitor.Exit(ManagedConnectionFactory.SyncConnection);
