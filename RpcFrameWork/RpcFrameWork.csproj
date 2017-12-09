@@ -53,6 +53,7 @@
     <Compile Include="Internal\DefaultRetryPolicy.cs" />
     <Compile Include="Internal\DurableConnection.cs" />
     <Compile Include="Internal\ManagedConnectionFactory.cs" />
+    <Compile Include="Internal\RoundList.cs" />
     <Compile Include="Internal\TypeNameSerializer.cs" />
     <Compile Include="IRetryPolicy.cs" />
     <Compile Include="IRabbitWatcher.cs" />
