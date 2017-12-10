@@ -1,10 +1,11 @@
-﻿using RabbitMQ.Client.Events;
+﻿using RabbitMQ.Client;
+using RabbitMQ.Client.Events;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace RpcFrameWork.Internal
+namespace RpcFrameWork
 {
     public class DefaultMessageHandler<T>:IMessageHandler
     {
@@ -47,7 +48,7 @@ namespace RpcFrameWork.Internal
         /// 在处理信息之前可以重新此方法
         /// </summary>
         /// <param name="args"></param>
-        protected virtual void BeforeHandingMessage(BasicDeliverEventArgs args)
+        protected virtual void BeforeHandlingMessage(BasicDeliverEventArgs args)
         {
         }
 
@@ -82,6 +83,50 @@ namespace RpcFrameWork.Internal
                   $" Exception:\n{exception}\n";
         }
 
+        public void HandleMessage(BasicDeliverEventArgs eventArgs)
+        {
+            bool msgHandled = false;
+            try
+            {
+                BeforeHandlingMessage(eventArgs);
+                HandleMessage(eventArgs, out msgHandled);
+            }
+            catch (Exception ex)
+            {
+                _watcher.Error(ex);
+                try
+                {
+                    HandleError(eventArgs, ex);
+                }
+                catch (Exception errorHandlingEx)
+                {
+                    _watcher.ErrorFormat("Failed to handle the exception: {0} because of {1}", ex.Message, errorHandlingEx.StackTrace);
+                }
+            }
+            finally
+            {
+                CleanUp(eventArgs, msgHandled);
+            }
+        }
+
+        protected virtual void HandleMessage(BasicDeliverEventArgs eventArgs, out bool msgHandled)
+        {
+            CheckMessageType(eventArgs.BasicProperties);
+            var message = _messageSerializer.Deserialize<T>(eventArgs.Body);
+
+            _msgHandlingAction(message, new MessageDeliverEventArgs
+            {
+                CounsumerTag = eventArgs.ConsumerTag,
+                DeliveryTag = eventArgs.DeliveryTag,
+                SubscriptionName = _subscriptionName,
+            });
+            msgHandled = true;
+        }
+        /// <summary>
+        /// 消息处理完后清理
+        /// </summary>
+        /// <param name="eventArgs"></param>
+        /// <param name="msgHandled"></param>
         internal void CleanUp(BasicDeliverEventArgs eventArgs, bool msgHandled)
         {
             if (!msgHandled && MessageWasNotHandled != null)
@@ -95,6 +140,39 @@ namespace RpcFrameWork.Internal
                     _watcher.ErrorFormat("触发MessageWasNotHandled事件时出现异常");
                     _watcher.Error(exceptionWhenFiringMessageWasNotDeliveredEvent);
                 }
+            }
+
+            try
+            {
+                AfterHandngMessage(eventArgs);
+            }
+            catch (Exception afterHandlingMessageException)
+            {
+                _watcher.ErrorFormat("There is an error when trying to call AfterHandlingMessage method");
+                _watcher.Error(afterHandlingMessageException);
+            }
+
+            if (HandlingComplete != null)
+            {
+                try
+                {
+                    HandlingComplete(eventArgs);
+                }
+                catch (Exception exceptionWhenFiringHandlingCompleteEvent)
+                {
+                    // Properly should Release pool + DoAck on the BurrowConsumer object
+                    _watcher.ErrorFormat("There is an error when trying to fire HandlingComplete event");
+                    _watcher.Error(exceptionWhenFiringHandlingCompleteEvent);
+                }
+            }
+        }
+
+        protected void CheckMessageType(IBasicProperties properties)
+        {
+            if (properties.Type != _typeName)
+            {
+                _watcher.ErrorFormat("Message type is incorrect. Expected '{0}', but was '{1}'", _typeName, properties.Type);
+                throw new Exception($"Message type is incorrect. Expected '{_typeName}', but was '{properties.Type}'");
             }
         }
 

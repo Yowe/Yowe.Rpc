@@ -17,7 +17,7 @@ namespace RpcFrameWork
             get;set;
         }
 
-        public string DeliveryTag
+        public ulong DeliveryTag
         {
             get; set;
         }
