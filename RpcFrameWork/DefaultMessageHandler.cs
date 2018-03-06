@@ -109,6 +109,7 @@ namespace RpcFrameWork
             }
         }
 
+
         protected virtual void HandleMessage(BasicDeliverEventArgs eventArgs, out bool msgHandled)
         {
             CheckMessageType(eventArgs.BasicProperties);

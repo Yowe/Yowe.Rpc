@@ -110,7 +110,11 @@ namespace RpcFrameWork.Internal
                 }
             }
         }
-
+        /// <summary>
+        /// 连接断开触发
+        /// </summary>
+        /// <param name="connection"></param>
+        /// <param name="reason"></param>
         private void Connection_ConnectionShutdown(IConnection connection, ShutdownEventArgs reason)
         {
             foreach (var item in SharedConnections)
@@ -122,7 +126,9 @@ namespace RpcFrameWork.Internal
                 }
             }
         }
-
+        /// <summary>
+        /// 关闭连接
+        /// </summary>
         internal static void CloseAllConnections()
         {
             SharedConnections.Values.ToList().ForEach(c =>
